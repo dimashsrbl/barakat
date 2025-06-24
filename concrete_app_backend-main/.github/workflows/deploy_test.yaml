@@ -1,0 +1,24 @@
+name: (TEST) Simple deployment with SSH on manual trigger
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH into server and run commands
+        uses: appleboy/ssh-action@v1.0.2
+        with:
+          host: ${{ secrets.TEST_SERVER_HOST }}
+          username: ${{ secrets.TEST_SERVER_USERNAME }}
+          key: ${{ secrets.TEST_SERVER_PRIVATE_KEY }}
+          port: ${{ secrets.TEST_SERVER_PORT }}
+          script: |
+            echo "started deployment"
+            cd ~/deploy/backend
+            git pull
+            docker compose -f docker-compose-test.yml up -d --build
+            docker compose -f docker-compose-test.yml exec app alembic upgrade head
+            echo "fin"

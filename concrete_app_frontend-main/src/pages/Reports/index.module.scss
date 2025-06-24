@@ -1,0 +1,45 @@
+.contentBlock {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.08);
+    gap: 16px;
+
+    @media (max-width: 768px) {
+        margin-top: 12px;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .topBlock {
+        gap: 16px;
+    }
+
+    .barButton{
+        display: flex;
+        padding: 13px 8px;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .buttonsBlock {
+        @media (max-width: 1500px) {
+            overflow: auto;
+            width: 600px;
+        }
+    }
+}
+
+.toolbar {
+    height: 69px;
+    display: flex;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    justify-content: flex-end;
+    padding: 10px;
+    top: 0;
+    right: 0;
+    left: 0;
+}

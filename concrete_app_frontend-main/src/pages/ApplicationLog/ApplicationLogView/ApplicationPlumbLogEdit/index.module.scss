@@ -1,0 +1,147 @@
+.contentBlock {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.08);
+    gap: 15px;
+    height: 92%;
+
+    label {
+        color: #828282;
+    }
+
+    .imagePlace {
+        position: relative; 
+        display: inline-block;
+        max-width: 356px;
+        height: 190px;
+        border-radius: 8px;
+
+        .image {
+            max-width: 356px;
+            height: 190px;
+            border-radius: 8px;
+        }
+
+        .closeImageIcon {
+            position: absolute; 
+            top: 8px;
+            right: 8px;
+        }
+    }
+
+    .emptyImagePlace {        
+        max-width: 356px;
+        height: 190px;
+        border-radius: 8px;
+        background: #D9D9D9;
+    }
+
+    .weightButtonsBlock {
+        gap: 18px;
+    }
+
+    .driverNameBlock {
+        flex-direction: row;
+        gap: 18px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+
+    .infoBlock {
+        flex-direction: row;
+        gap: 18px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+
+    .totalInformationBlock {
+        gap: 16px;
+    }
+
+    .totalInformationFields {
+        gap: 10px;
+    }
+
+    .vehicleInfoBlock {
+        gap: 16px;
+    }
+
+    .monitoringDataBlock {
+        gap: 16px;
+    }
+
+    .titleBlock {
+        gap: 6px;
+    }
+
+    .personalBlock {
+        gap: 12px;
+    }
+
+    .inputBlock {
+        gap: 18px;
+    }
+
+    .additionalBlock {
+        gap: 12px;
+    }
+
+    .actionButtons {
+        flex-direction: row;
+        margin-top: 20px;
+        gap: 18px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+
+
+    .otherBlock {
+        gap: 16px;
+    }
+
+    .otherInputBlock {
+        flex-direction: row;
+        gap: 18px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+
+    .leftBlock {
+        flex-direction: row;
+        gap: 18px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+    
+    .monitoringDataFieldsBlock {
+        gap: 16px;
+    }
+}
+
+.headerBlock {
+    flex-direction: row;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+}
+
+.breadCrumbBlock {
+    flex-direction: row;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+}

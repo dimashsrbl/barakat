@@ -1,0 +1,31 @@
+.reportBlock {
+    gap: 24px;
+    
+    .filterBlock {
+        gap: 12px;
+    }
+    
+    .datePickerBlock {
+        flex-direction: row;
+        gap: 18px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    .actionButtons {
+        gap: 20px;
+    }
+
+    .inputBlock {
+        flex-direction: row;
+        gap: 18px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}

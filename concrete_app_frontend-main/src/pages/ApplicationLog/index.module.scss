@@ -1,0 +1,370 @@
+.contentBlock {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.08);
+
+    .actionBlock {
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .rowBlock {
+        border-radius: 8px;
+        border: 1px solid var(--Gray-5, #E0E0E0);
+        padding: 12px 16px;
+        gap: 12px;
+    }
+    
+    .disabledRowBlock {
+        border-radius: 8px;
+        background: var(--Gray-6, #F2F2F2);
+        padding: 12px 16px;
+        gap: 36px;
+
+        span {
+            color: #828282;
+        } 
+    }
+
+    .row {
+        background: var(--Gray-6, #F2F2F2);
+        color: var(--Gray-3, #828282);
+        border-radius: 6px;
+        gap: 10px;
+        padding: 16px 20px;
+    }
+
+    .secondrow {
+        padding: 4px 20px;
+        height: 40px;
+
+        &:hover {
+            border-radius: 6px;
+            background: #F5F5F5;
+        }
+    }
+
+    .secondrow.selected {
+        padding: 0;
+    }
+
+    .selectedRow.selected {
+        border-radius: 6px;
+        background: #F2F2F2;
+        padding: 16px 20px;
+    }
+
+    .requestWeighingsDropdown {
+        height: 42px;
+        transition: max-height 0.3s ease;
+        background: #E0E0E0;
+        color: #4F4F4F;
+        border-radius: 6px;
+        padding: 10px 20px;
+      }
+    
+    .requestWeighingsSecondrow {
+        padding: 10px 20px;
+        height: 40px;
+
+        &:hover {
+            border-radius: 6px;
+            background: #F5F5F5;
+        }
+    }
+
+    .rowItem {
+        gap: 8px;
+
+        span {
+            color: #4F4F4F;
+        }
+    }
+
+    .infoBlockDropdown {
+        position: absolute;
+        right: 0;
+        width: 250px;
+        padding: 16px;
+        transition: max-height 0.3s ease;
+        border-radius: 12px;
+        background: var(--FFFFFF, #FFF);
+        box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.08);
+        gap: 12px;
+        z-index: 999;
+    }
+    
+    .descriptionBlockDropdown {
+        position: absolute;
+        left: 20px;
+        top: 35px;
+        width: 250px;
+        padding: 16px;
+        transition: max-height 0.3s ease;
+        border-radius: 12px;
+        background: var(--FFFFFF, #FFF);
+        box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.08);
+        z-index: 999;
+    }
+
+    .absText {
+        color: #EB5757 !important;
+    }
+
+    .bellText {
+        color: #2F80ED !important;
+    }
+
+    // LeftLayerStyle
+
+    .layer {
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+    }
+
+    .red {
+        background: #EB5757;
+    }
+
+    .green {
+        background: #219653;
+    }
+
+    .gray {
+        background: #828282;
+    }
+
+    .orange {
+        background: #F2994A;
+    }
+
+    .yellow {
+        background: #fdd664;
+    }
+
+    // PROGRESS BAR
+
+    .progressBar {
+        position: relative;
+        height: 24px;
+        padding: 8px 0px;
+        border-radius: 8px;
+        background: var(--Gray-4, #BDBDBD);
+        overflow: hidden;
+    
+    .progressText {
+        color: #333; 
+    }
+    
+    .greenProgress, .orangeProgress, .yellowProgress, .grayProgress {
+        height: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .greenProgress {
+        background-color: #219653;
+
+        span {
+           color: #fff; 
+        }
+    }
+    
+    .orangeProgress {
+        background-color: #F2994A;
+
+        span {
+            color: #333; 
+         }
+    }
+
+    .yellowProgress {
+        background-color: #fdd664;
+
+        span {
+            color: #333; 
+         }
+    }
+    
+    .grayProgress {
+        background-color: #E0E0E0;
+        
+        span {
+            color: #333; 
+         }
+    }
+    }
+
+    // GENERAL PROGRESS
+
+    .generalProgressBar {
+        position: relative;
+        height: 48px;
+        padding: 8px 0px;
+        border-radius: 8px;
+        background: var(--Gray-4, #BDBDBD);
+        overflow: hidden;
+    
+    .progressText {
+        color: #333; 
+    }
+    
+    .greenProgress, .orangeProgress, .yellowProgress, .grayProgress {
+        height: 48px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .greenProgress {
+        background-color: #219653;
+
+        span {
+           color: #fff; 
+        }
+    }
+    
+    .orangeProgress {
+        background-color: #F2994A;
+
+        span {
+            color: #333; 
+         }
+    }
+    
+    .yellowProgress {
+        background-color: #fdd664;
+
+        span {
+            color: #333; 
+         }
+    }
+    
+    .grayProgress {
+        background-color: #E0E0E0;
+        
+        span {
+            color: #333; 
+         }
+    }
+    }
+}
+
+.mobileContentBlock {
+    margin-top: 4em;
+    
+    .mobileActionBlock {
+        justify-content: flex-end;
+    }
+
+    .dataMobileBlock {
+        padding: 16px;
+        gap: 16px;
+        border-radius: 16px;
+        border: 1px solid var(--Gray-5, #E0E0E0);
+    }
+
+    // LeftLayerStyle
+
+    .layer {
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+    }
+
+    .red {
+        background: #EB5757;
+    }
+
+    .green {
+        background: var(--Green-1, #219653);
+    }
+
+    .gray {
+        background: var(--Green-1, #828282);
+    }
+
+    .orange {
+        background: var(--Green-1, #F2994A);
+    }
+
+    .yellow {
+        background: #fdd664;
+    }
+
+    // PROGRESS BAR
+
+    .progressBar {
+        position: relative;
+        height: 36px;
+        padding: 8px 0px;
+        border-radius: 8px;
+        background: var(--Gray-4, #BDBDBD);
+        overflow: hidden;
+    
+    .progressText {
+        color: #333; 
+    }
+    
+    .greenProgress, .orangeProgress, .grayProgress {
+        height: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .greenProgress {
+        background-color: #219653;
+
+        span {
+           color: #fff; 
+        }
+    }
+    
+    .orangeProgress {
+        background-color: #F2994A;
+
+        span {
+            color: #333; 
+         }
+    }
+    
+    .grayProgress {
+        background-color: #E0E0E0;
+        
+        span {
+            color: #333; 
+         }
+    }
+    }
+
+    .dependentWeighingMobileBlockItem {
+        padding: 12px;
+        gap: 16px;
+        border-radius: 12px;
+        background: #FAFAFA;
+    }
+}
+
+.toolbar {
+    display: flex;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    justify-content: flex-end;
+    padding: 10px;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    .filterBlock {
+        width: 48px;
+        height: 48px;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid var(--Gray-6, #F2F2F2);
+    }
+}

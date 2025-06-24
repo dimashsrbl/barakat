@@ -1,0 +1,39 @@
+.contentBlock {
+    gap: 16px;
+
+    .row {
+        background: var(--Gray-6, #F2F2F2);
+        color: var(--Gray-3, #828282);
+        border-radius: 6px;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+
+    .secondrow {
+        padding: 16px 20px;
+        gap: 16px;
+        height: 54px;
+
+        &:hover {
+            border-radius: 6px;
+            background: #F5F5F5;
+        }
+    }
+
+    .actionBlock {
+        gap: 16px;
+    }
+}
+
+.mobileContentBlock {
+    .mobileActionBlock {
+        justify-content: flex-end;
+    }
+
+    .dataMobileBlock {
+        padding: 16px;
+        gap: 16px;
+        border-radius: 6px;
+        border: 1px solid var(--Gray-5, #E0E0E0);
+    }
+}

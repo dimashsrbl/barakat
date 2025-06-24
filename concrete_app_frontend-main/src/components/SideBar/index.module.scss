@@ -1,0 +1,84 @@
+.main {
+  display: flex;
+  gap: 20px;
+  padding: 36px 20px;
+  box-shadow: 8px 0px 24px 0px rgba(0, 0, 0, 0.04);
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+
+  @media (max-width: 768px) {
+    gap: 25px;
+  }
+
+  .LogoBlock {
+    background-color: #2F80ED;
+    color: #FFFFFF;
+    width: 200px;
+    height: 50px;
+    border-radius: 6px;
+    line-height: 50px;
+  }
+
+  hr {
+    height: 1px;
+    background: #BDBDBD;
+  }
+}
+
+.container {
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-right: 1px solid var(--Gray-6, #F2F2F2);
+    background: #FFF;
+    z-index: 999;
+  }
+}
+
+.list {
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  .item {
+    padding: 8px;
+    border-radius: 6px;
+    transition: .2s ease;
+
+    &:hover {
+      color: #2F80ED;
+    }
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: column;
+
+    .item {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}
+
+.mobilenavbtn {
+  display: none;
+  position: absolute;
+  transition: .2s ease;
+  top: 3px;
+  left: 0px;
+
+  @media (max-width: 768px) {
+    display: block; // Показываем кнопку на больших экранах
+  }
+}
+
+.hidden {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}

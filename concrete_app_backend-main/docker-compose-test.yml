@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:15
+    restart: always
+    container_name: db_app
+    command: -p 5433
+    expose:
+      - 5433
+    env_file:
+      - .env-test
+    environment:
+      - TZ=Asia/Almaty
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+    volumes:
+      - /data/backend/media:/barakat_backend/media
+    restart: always
+    env_file:
+      - .env-test
+    container_name: barakat_backend
+    command: ["/barakat_backend/docker/app.sh"]
+    ports:
+      - 9999:8000
+    depends_on:
+      - db
+    environment:
+      - TZ=Asia/Almaty
+
+volumes:
+  db_volume:

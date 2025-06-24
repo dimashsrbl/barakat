@@ -1,0 +1,6 @@
+{
+  "baudrate": 9600,
+  "port": "5",
+  "connect_interval": 5,
+  "driver": "IP65"
+}

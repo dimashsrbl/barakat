@@ -1,0 +1,31 @@
+.main {
+    background-image: url('../../assets/images/login_page_wallpaper.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 100%;
+    height: 100vh;
+    gap: 60px;
+
+    .LogoBlock {
+        background-color: #2F80ED;
+        color: #FFFFFF;
+        width: 200px;
+        height: 60px;
+        border-radius: 6px;
+        line-height: 60px;
+    }
+
+    .loginBlock {
+        width: 452px;
+        height: 411px;
+        padding: 36px;
+        gap: 25px;
+        border-radius: 32px;
+        background-color: #FFFFFF;
+
+        @media (max-width: 768px) {
+            width: 90%;
+        }
+    }
+}

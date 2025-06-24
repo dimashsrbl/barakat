@@ -1,0 +1,57 @@
+.contentBlock {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.08);
+    gap: 16px;
+
+    .row {
+        background: var(--Gray-6, #F2F2F2);
+        color: var(--Gray-3, #828282);
+        border-radius: 6px;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+
+    .secondrow {
+        padding: 16px 20px;
+        gap: 16px;
+        height: 54px;
+
+        &:hover {
+            border-radius: 6px;
+            background: #F5F5F5;
+        }
+    }
+
+    .actionBlock {
+        gap: 16px;
+    }
+}
+
+.mobileContentBlock {
+    margin-top: 4em;
+
+    .mobileActionBlock {
+        justify-content: flex-end;
+    }
+
+    .dataMobileBlock {
+        padding: 16px;
+        gap: 16px;
+        border-radius: 6px;
+        border: 1px solid var(--Gray-5, #E0E0E0);
+    }
+}
+
+.toolbar {
+    display: flex;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    justify-content: flex-end;
+    padding: 10px;
+    top: 0;
+    right: 0;
+    left: 0;
+}
