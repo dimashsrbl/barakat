@@ -2,6 +2,7 @@ import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from api.dependencies import UOWDep, get_current_user, check_permission
 from models.user import User
@@ -215,3 +216,83 @@ async def send_telegram_message(
 ) -> dict:
     weighing = await WeighingService().send_telegram_message(uow, weighing_id)
     return format_response(weighing)
+
+
+class AutoWeighingRequest(BaseModel):
+    plate_number: str | None = None
+
+@router.post("/auto_independent", description="Автоматический независимый отвес (брутто -> тара -> накладная)")
+async def auto_independent_weighing(
+    req: AutoWeighingRequest,
+    uow: UOWDep,
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Полностью автоматизированный процесс независимого отвеса:
+    1. Принимает номер машины (или генерирует)
+    2. Первый отвес (брутто)
+    3. Второй отвес (тара)
+    4. Возвращает результат и накладную (заглушка)
+    """
+    import random
+    from datetime import datetime
+
+    # 1. Получение/генерация номера
+    plate_number = req.plate_number or f"A{random.randint(100,999)}BC{random.randint(10,99)}"
+    brutto = random.randint(20000, 30000)
+    tare = random.randint(7000, 12000)
+
+    # 2. Первый отвес (брутто)
+    weighing_data = {
+        "plate_number_input": plate_number,
+        "brutto_weight": brutto,
+        "seller_company_id": current_user.company_id,  # теперь из пользователя
+        "client_company_id": 2,  # id компании 'Баракат'
+        "material_id": 1,        # заглушка, можно доработать
+        "construction_id": 1,    # заглушка, можно доработать
+        "cubature": 10.0,        # заглушка
+        "is_depend": False,
+        "first_operator_id": current_user.id,
+        "detail_id": 1,          # заглушка, можно доработать
+    }
+    weighing = await WeighingService().create_independent(
+        uow,
+        IndependentWeighingSchemaAdd(**weighing_data),
+        current_user.id
+    )
+
+    # 3. Второй отвес (тара)
+    finish_data = {
+        "tare_weight": tare,
+        "brutto_weight": brutto,
+        "seller_company_id": getattr(weighing.seller_company, 'id', None),
+        "client_company_id": getattr(weighing.client_company, 'id', None),
+        "material_id": getattr(weighing.material, 'id', None),
+        "construction_id": getattr(weighing.construction, 'id', None) if hasattr(weighing, 'construction') and weighing.construction else None,
+        "cubature": weighing.cubature,
+        "plate_number_input": plate_number,
+        # ... другие поля при необходимости ...
+    }
+    finished_weighing = await WeighingService().finish_independent(
+        uow,
+        weighing.id,
+        IndependentWeighingSchemaUpdateNotFinished(**finish_data),
+        current_user.id
+    )
+
+    # 4. Генерация накладной (заглушка)
+    invoice = {
+        "plate_number": plate_number,
+        "brutto": brutto,
+        "tare": tare,
+        "netto": brutto - tare,
+        "date": datetime.now().isoformat(),
+        "material": "Материал (заглушка)",
+        "seller_company": "Поставщик (заглушка)",
+        "client_company": "Заказчик (заглушка)"
+    }
+
+    return {
+        "weighing": finished_weighing,
+        "invoice": invoice
+    }

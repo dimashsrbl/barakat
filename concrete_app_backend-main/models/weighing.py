@@ -25,7 +25,7 @@ class Weighing(Base):
     second_operator_id: Mapped[Optional[int]] = mapped_column(ForeignKey('user.id'))
     transport_id: Mapped[int] = mapped_column(ForeignKey('transport.id'))
     driver_id: Mapped[Optional[int]] = mapped_column(ForeignKey("driver.id"))
-    detail_id: Mapped[int] = mapped_column(ForeignKey('detail.id'))
+    detail_id: Mapped[Optional[int]] = mapped_column(ForeignKey('detail.id'), nullable=True)
     photo_id: Mapped[Optional[int]] = mapped_column(ForeignKey('photo.id'))
 
     # without request

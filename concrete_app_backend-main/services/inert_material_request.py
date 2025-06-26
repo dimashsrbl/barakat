@@ -10,12 +10,27 @@ class InertMaterialRequestService:
             existing = await uow.inert_material_request.find_one_or_none(transport_id=data.transport_id, status=InertRequestStatusEnum.active)
             if existing:
                 raise Exception("У этого транспорта уже есть активная заявка!")
+            # Получаем пользователя и его компанию
+            user = await uow.user.find_one_or_none(id=user_id)
+            if not user or not user.company_id:
+                raise Exception("У пользователя не указана компания!")
+            # Создаём detail
+            detail = await uow.detail.create({
+                'seller_company_id': user.company_id,
+                'client_company_id': 2,  # id компании 'Баракат'
+                'material_id': data.material_id,
+                'construction_id': None,
+                'object_id': None,
+                'cone_draft_default': None,
+            })
+            # Создаём заявку с detail_id
             obj = await uow.inert_material_request.create({
                 **data.dict(),
                 'created_by': user_id,
                 'status': InertRequestStatusEnum.active,
                 'created_at': datetime.utcnow(),
                 'updated_at': datetime.utcnow(),
+                'detail_id': detail.id,
             })
             await uow.commit()
             return obj.to_read_model()

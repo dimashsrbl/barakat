@@ -18,6 +18,7 @@ class UserSchema(BaseModel):
     role_id: PositiveInt
     role: RoleSchema = None
     is_active: bool
+    company_id: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -29,6 +30,7 @@ class UserSchemaCreate(BaseModel):
     description: Optional[str] = None
     role_id: PositiveInt
     password: str
+    company_id: Optional[int] = None
 
 
 class UserSchemaUpdate(BaseModel):
@@ -36,6 +38,7 @@ class UserSchemaUpdate(BaseModel):
     description: Optional[str] = None
     role_id: PositiveInt
     password: str
+    company_id: Optional[int] = None
 
 
 class UserSchemaIsActive(BaseModel):

@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentUserData, selectUser } from '../../store/features/apiSlice';
 
 const SupplierCreateCarrierPage = () => {
   const [name, setName] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const rawUser = useSelector(selectUser);
+  const user = typeof rawUser === 'string' ? JSON.parse(rawUser) : rawUser;
+
+  useEffect(() => {
+    dispatch(getCurrentUserData());
+  }, [dispatch]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setSuccess('');
+    if (!user || user.role?.name !== 'Поставщик') {
+      setError('Недостаточно прав для выполнения этого запроса.');
+      return;
+    }
     try {
       await api.post('/api/carrier/create', {
         name,

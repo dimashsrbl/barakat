@@ -13,6 +13,7 @@ class InertMaterialRequest(Base):
     carrier_id: Mapped[int] = mapped_column(ForeignKey('carrier.id'))
     material_id: Mapped[int] = mapped_column(ForeignKey('material.id'))
     created_by: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    detail_id: Mapped[int] = mapped_column(ForeignKey('detail.id'), nullable=True)
     status: Mapped[InertRequestStatusEnum] = mapped_column(Enum(InertRequestStatusEnum), default=InertRequestStatusEnum.active)
     created_at: Mapped[created_at]
     updated_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)

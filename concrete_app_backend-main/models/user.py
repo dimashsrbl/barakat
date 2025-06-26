@@ -21,6 +21,8 @@ class User(Base):
         ForeignKey('role.id')
     )
 
+    company_id: Mapped[Optional[int]] = mapped_column(ForeignKey('company.id'), nullable=True)
+
     def to_read_model(self) -> UserSchema:
         return UserSchema(
             id=self.id,
@@ -29,4 +31,5 @@ class User(Base):
             description=self.description,
             is_active=self.is_active,
             role_id=self.role_id,
+            company_id=self.company_id,
         )

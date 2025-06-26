@@ -36,7 +36,7 @@ class WeighingSchema(BaseModel):
     driver_id: Optional[int] = None
     driver: DriverSchema = None
 
-    detail_id: PositiveInt
+    detail_id: Optional[int] = None
     seller_company: CompanySchema = None
     client_company: CompanySchema = None
     material: MaterialSchema = None
@@ -95,7 +95,7 @@ class SingleIndependentWeighingSchemaRead(BaseModel):
     second_operator: Optional[UserSchema] = None
 
     # detail of independent weighing
-    detail_id: PositiveInt
+    detail_id: Optional[int] = None
     seller_company: CompanySchema = None
     client_company: CompanySchema = None
     material: MaterialSchema = None
@@ -125,7 +125,7 @@ class SingleDependentWeighingSchemaRead(BaseModel):
     second_operator: Optional[UserSchema] = None
 
     # detail of dependent weighing
-    detail_id: PositiveInt
+    detail_id: Optional[int] = None
     seller_company: CompanySchema = None
     client_company: CompanySchema = None
     material: MaterialSchema = None
@@ -159,7 +159,7 @@ class MultipleIndependentWeighingSchemaRead(BaseModel):
     netto_weight: Optional[PositiveInt] = None
 
     # detail of independent weighing
-    detail_id: PositiveInt
+    detail_id: Optional[int] = None
     seller_company: CompanySchema = None
     client_company: CompanySchema = None
     material: MaterialSchema = None

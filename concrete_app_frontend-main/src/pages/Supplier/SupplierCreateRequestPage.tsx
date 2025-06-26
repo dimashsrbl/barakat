@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentUserData, selectUser } from '../../store/features/apiSlice';
 
 const SupplierCreateRequestPage = () => {
   const [transports, setTransports] = useState<{id: number, plate_number: string, carrier_id: number}[]>([]);
@@ -8,8 +10,12 @@ const SupplierCreateRequestPage = () => {
   const [materialId, setMaterialId] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const rawUser = useSelector(selectUser);
+  const user = typeof rawUser === 'string' ? JSON.parse(rawUser) : rawUser;
 
   useEffect(() => {
+    dispatch(getCurrentUserData());
     // Получить свои машины
     api.get('/api/transport/my', {
       headers: { Authorization: `Bearer ${localStorage.getItem('supplier_token')}` }
@@ -22,11 +28,15 @@ const SupplierCreateRequestPage = () => {
     })
       .then(res => setMaterials(res.data.data))
       .catch(() => setError('Ошибка загрузки материалов'));
-  }, []);
+  }, [dispatch]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setSuccess('');
+    if (!user || user.role?.name !== 'Поставщик') {
+      setError('Недостаточно прав для выполнения этого запроса.');
+      return;
+    }
     try {
       await api.post('/api/inert_request/create', {
         transport_id: Number(transportId),

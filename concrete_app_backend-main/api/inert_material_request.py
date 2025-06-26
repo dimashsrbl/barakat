@@ -75,6 +75,12 @@ async def get_my_invoices(uow: UOWDep, current_user: User = Depends(get_current_
     result = []
     for r in my_requests:
         d = r.to_read_model() if hasattr(r, 'to_read_model') else dict(r)
+        d = d.model_dump() if hasattr(d, 'model_dump') else dict(d)
         d['company'] = company_name
+        weighing = await uow.weighing.find_one_or_none(inert_request_id=r.id, is_finished=True)
+        if weighing:
+            d['invoice_path'] = f"media/invoice_{weighing.id}.xlsx"
+        else:
+            d['invoice_path'] = None
         result.append(d)
     return format_response(result) 

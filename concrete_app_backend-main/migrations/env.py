@@ -32,6 +32,7 @@ from models.user import User
 from models.weighing import Weighing
 from models.photo import Photo
 # from models.weight_indicator import WeightIndicator
+from models.inert_material_request import InertMaterialRequest
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

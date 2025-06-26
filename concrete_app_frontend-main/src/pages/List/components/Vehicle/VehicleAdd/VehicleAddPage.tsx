@@ -1,8 +1,8 @@
 import {useState, useCallback, useEffect} from 'react';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { postAddVehicleData, getCarrierData, getDriversData } from 'store/features/apiSlice';
+import { postAddVehicleData, getCarrierData, getDriversData, getCurrentUserData, selectUser } from 'store/features/apiSlice';
 
 import { WeightIndicatorComponent } from 'ui/WeightIndicatorComponent'
 import { InputComponent } from 'ui/InputComponent';
@@ -29,6 +29,7 @@ export const VehicleAddPage = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const user = useSelector(selectUser);
     const isMobile: boolean = useWindowSize();
 
     const getCarriers = useCallback(async () => {
@@ -42,6 +43,10 @@ export const VehicleAddPage = () => {
     }, [dispatch]);
 
     const addHandler = async () => {
+        if (!user || user.role?.name !== 'Поставщик') {
+            setResponseError('Недостаточно прав для выполнения этого запроса.');
+            return;
+        }
         setIsDisabled(true);
         const obj: any = {
             plate_number: plateNumber,
@@ -74,14 +79,15 @@ export const VehicleAddPage = () => {
     }
 
     useEffect(() => {
+        dispatch(getCurrentUserData());
+        getCarriers();
+        getDrivers();
+    }, [dispatch, getCarriers, getDrivers]);
+
+    useEffect(() => {
         if (plateNumber !== '' && driver !== null && numberRegex.test(admissibleError) && carrier !== null && numberRegex.test(tare)) setIsDisabled(false);
         else setIsDisabled(true);
     }, [plateNumber, driver, admissibleError, carrier, tare]);
-
-    useEffect(() => {
-        getCarriers();
-        getDrivers();
-    }, [getCarriers, getDrivers]);
 
  return (
     <div className='main'>
@@ -98,7 +104,7 @@ export const VehicleAddPage = () => {
         <div className={`${s.contentBlock} df fdc`}>
             <div className={`${s.titleBlock} df fdc`}>
                 <span className='fw600 fz20'>Добавить новый транспорт</span>
-                <span className='fz16'>Введите данные и нажмите кнопку “Добавить транспорт”</span>
+                <span className='fz16'>Введите данные и нажмите кнопку "Добавить транспорт"</span>
             </div>
             <div className={`${s.personalBlock} df fdc`}>
                 <span className="fw600">Данные о транспорте</span>

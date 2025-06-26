@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { postAddCarriersData } from 'store/features/apiSlice';
+import { postAddCarriersData, getCurrentUserData, selectUser } from 'store/features/apiSlice';
 
 import { WeightIndicatorComponent } from 'ui/WeightIndicatorComponent'
 import { InputComponent } from 'ui/InputComponent';
@@ -21,9 +21,23 @@ export const CarrierAddPage = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const user = useSelector(selectUser);
     const isMobile: boolean = useWindowSize();
 
+    useEffect(() => {
+        dispatch(getCurrentUserData());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (name !== '') setIsDisabled(false);
+        else setIsDisabled(true);
+    }, [name]);
+
     const addHandler = async () => {
+        if (!user || user.role?.name !== 'Поставщик') {
+            setResponseError('Недостаточно прав для выполнения этого запроса.');
+            return;
+        }
         setIsDisabled(true);
         const obj: any = {
             name: name,
@@ -50,11 +64,6 @@ export const CarrierAddPage = () => {
             return
         }
     }
-
-    useEffect(() => {
-        if (name !== '') setIsDisabled(false);
-        else setIsDisabled(true);
-    }, [name]);
 
  return (
     <div className='main'>

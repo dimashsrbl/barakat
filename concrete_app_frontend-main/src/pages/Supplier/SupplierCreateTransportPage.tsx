@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentUserData, selectUser } from '../../store/features/apiSlice';
 
 const SupplierCreateTransportPage = () => {
   const [carriers, setCarriers] = useState<{id: number, name: string}[]>([]);
@@ -7,19 +9,35 @@ const SupplierCreateTransportPage = () => {
   const [carrierId, setCarrierId] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const rawUser = useSelector(selectUser);
+  const user = typeof rawUser === 'string' ? JSON.parse(rawUser) : rawUser;
 
   useEffect(() => {
+    dispatch(getCurrentUserData());
     // Получить своих перевозчиков
     api.get('/api/carrier/my', {
       headers: { Authorization: `Bearer ${localStorage.getItem('supplier_token')}` }
     })
       .then(res => setCarriers(res.data.data))
       .catch(() => setError('Ошибка загрузки перевозчиков'));
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log('user:', user);
+  }, [user]);
+
+  if (!user || !user.role || !user.role.name) {
+    return <div>Загрузка данных пользователя...</div>;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setSuccess('');
+    if (!user || user.role?.name !== 'Поставщик') {
+      setError('Недостаточно прав для выполнения этого запроса.');
+      return;
+    }
     try {
       await api.post('/api/transport/create', {
         plate_number: plateNumber,
@@ -57,7 +75,9 @@ const SupplierCreateTransportPage = () => {
             ))}
           </select>
         </div>
-        <button type="submit" style={{ width: '100%', padding: 10 }}>Добавить машину</button>
+        <button type="submit" style={{ width: '100%', padding: 10 }} disabled={!user || user.role?.name !== 'Поставщик'}>
+          Добавить машину
+        </button>
       </form>
       {success && <div style={{ color: 'green', marginTop: 16 }}>{success}</div>}
       {error && <div style={{ color: 'red', marginTop: 16 }}>{error}</div>}

@@ -153,6 +153,15 @@ class WeighingService:
                                                                 f"http://{result.concrete_mixing_plant.ip_address}:8001")
             # # bsu request sending logic end
             await uow.detail.update(detail.id, {"cone_draft_default": result.cone_draft})
+
+            # --- АВТОМАТИЧЕСКОЕ ЗАВЕРШЕНИЕ ЗАЯВКИ ---
+            # Проверяем, остались ли еще незавершенные отвесы по detail_id
+            active_weighings, _ = await uow.weighing.get_all(is_finished=False, detail_id=detail.id, is_depend=True)
+            if not active_weighings:
+                from services.request import RequestService
+                await RequestService().close_request(uow, request.id)
+            # --- КОНЕЦ БЛОКА ---
+
             await uow.commit()
             return result
 
@@ -340,14 +349,17 @@ class WeighingService:
                                                         is_depend=False, **filter_by)
 
             for result in results:
-                detail = (await uow.detail.find_one_or_none(id=result.detail_id)).to_read_model()
-
-                result.seller_company = (
-                    await uow.company.find_one_or_none(id=detail.seller_company_id)).to_read_model()
-                result.client_company = (
-                    await uow.company.find_one_or_none(id=detail.client_company_id)).to_read_model()
-                result.material = (await uow.material.find_one_or_none(id=detail.material_id)).to_read_model()
-
+                if result.detail_id:
+                    detail = (await uow.detail.find_one_or_none(id=result.detail_id)).to_read_model()
+                    result.seller_company = (
+                        await uow.company.find_one_or_none(id=detail.seller_company_id)).to_read_model()
+                    result.client_company = (
+                        await uow.company.find_one_or_none(id=detail.client_company_id)).to_read_model()
+                    result.material = (await uow.material.find_one_or_none(id=detail.material_id)).to_read_model()
+                else:
+                    result.seller_company = None
+                    result.client_company = None
+                    result.material = None
                 result.transport = (await uow.transport.find_one_or_none(id=result.transport_id)).to_read_model()
 
             total_tare = round(total_weight['tare'] / 1000, 2) if total_weight['tare'] else 0
@@ -597,6 +609,15 @@ class WeighingService:
                     result.is_sent_to_telegram = await send_to_telegram(object.chat_id, message)
 
             await uow.detail.update(detail.id, {"cone_draft_default": result.cone_draft})
+
+            # --- АВТОМАТИЧЕСКОЕ ЗАВЕРШЕНИЕ ЗАЯВКИ ---
+            # Проверяем, остались ли еще незавершенные отвесы по detail_id
+            active_weighings, _ = await uow.weighing.get_all(is_finished=False, detail_id=detail.id, is_depend=True)
+            if not active_weighings:
+                from services.request import RequestService
+                await RequestService().close_request(uow, request.id)
+            # --- КОНЕЦ БЛОКА ---
+
             await uow.commit()
             return result
 

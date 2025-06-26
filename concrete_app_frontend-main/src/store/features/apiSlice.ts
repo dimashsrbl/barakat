@@ -1308,6 +1308,10 @@ const apiSlice = createSlice({
         state.error = action.error.message
       })
 
+      .addCase(getCurrentUserData.fulfilled, (state, action) => {
+        state.user = action.payload.data;
+      })
+
       .addCase(setHide, (state, action) => {
         state.hide = action.payload
       })
@@ -1321,5 +1325,10 @@ const apiSlice = createSlice({
 export const { setToken, setHide, setUser } = apiSlice.actions
 export const selectUser = (state: any) => state.api.user
 export const selectHide = (state: any) => state.api.hide
-export const selectToken = (state: any) => state.api.token
+export const selectToken = (state: any) => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('supplier_token') || localStorage.getItem('authtoken');
+  }
+  return undefined;
+}
 export default apiSlice.reducer
