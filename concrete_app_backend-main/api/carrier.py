@@ -21,7 +21,7 @@ async def create_carrier(
         permissions: list = Depends(check_permission("create_handbook")),
         current_user: User = Depends(get_current_user),
 ) -> dict:
-    carrier = await CarrierService().create(uow, carrier)
+    carrier = await CarrierService().create(uow, carrier, current_user.id)
     return format_response(carrier)
 
 
@@ -71,3 +71,10 @@ async def change_is_active(
 ) -> dict:
     carrier = await CarrierService().change_is_active(uow, carrier_id, carrier_update)
     return format_response(carrier)
+
+
+@router.get("/my")
+async def get_my_carriers(uow: UOWDep, current_user: User = Depends(get_current_user)):
+    # Возвращаем только перевозчиков, созданных этим пользователем
+    carriers, _ = await uow.carrier.get_all(created_by=current_user.id)
+    return format_response(carriers)

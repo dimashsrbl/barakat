@@ -53,6 +53,13 @@ import { ApplicationPlumbLogViewPage } from 'pages/ApplicationLog/ApplicationLog
 import { Drivers } from 'pages/List/components/Drivers/Drivers'
 import { DriverAddPage } from 'pages/List/components/Drivers/DriverAdd/DriverAddPage'
 import { DriverEditPage } from 'pages/List/components/Drivers/DriverEdit/DriverEditPage'
+import SupplierWeighingRequestsPage from 'pages/SupplierWeighingRequests/SupplierWeighingRequestsPage'
+import SupplierLoginPage from 'pages/Supplier/LoginPage'
+import SupplierLayout from 'pages/Supplier/SupplierLayout'
+import SupplierCreateRequestPage from 'pages/Supplier/SupplierCreateRequestPage'
+import SupplierCreateTransportPage from 'pages/Supplier/SupplierCreateTransportPage'
+import SupplierCreateCarrierPage from 'pages/Supplier/SupplierCreateCarrierPage'
+import SupplierInvoicesPage from 'pages/Supplier/SupplierInvoicesPage'
 
 const routes = {
   main: '/main',
@@ -71,7 +78,12 @@ function App() {
 
   useEffect(() => {
     const authToken = localStorage.getItem('authtoken');
-    if (!authToken) navigate('/login');
+    const currentPath = window.location.pathname;
+    
+    // Не перенаправляем на логин, если пользователь на supplier-маршрутах
+    if (!authToken && !currentPath.startsWith('/supplier')) {
+      navigate('/login');
+    }
   }, [navigate]);
 
   return (
@@ -149,8 +161,18 @@ function App() {
           <Route path={`${routes.applicationLog}/view-plumb/:id`} element={<ApplicationPlumbLogViewPage />} />
         </Route>
 
+        {/* Supplier Weighing Requests */}
+        <Route path="/main/supplier-weighing-requests" element={<SupplierWeighingRequestsPage />} />
+
       </Route>
       <Route path={''} element={<NavigateToLogin />} />
+      <Route path="/supplier/login" element={<SupplierLoginPage onLogin={() => window.location.href = '/supplier/create-request'} />} />
+      <Route path="/supplier" element={<SupplierLayout />}>
+        <Route path="create-request" element={<SupplierCreateRequestPage />} />
+        <Route path="create-transport" element={<SupplierCreateTransportPage />} />
+        <Route path="create-carrier" element={<SupplierCreateCarrierPage />} />
+        <Route path="invoices" element={<SupplierInvoicesPage />} />
+      </Route>
     </Routes>
   );
 }

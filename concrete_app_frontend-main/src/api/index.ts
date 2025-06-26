@@ -1,8 +1,7 @@
 import axios from 'axios'
 
-const protocol = window.location.protocol;
-const host = window.location.host;
-const baseURL = process.env.REACT_APP_BASE_URL || `${protocol}//api.${host}/`;
+const baseURL = "http://localhost:8000";
+//const baseURL = process.env.REACT_APP_BASE_URL || `${protocol}//api.${host}/`;
 
 const api = axios.create({
   baseURL: baseURL,
@@ -14,25 +13,23 @@ let cancel: Function | null
 // Интерцептор для запросов
 axios.interceptors.request.use(
   (config: any) => {
-    // Устанавливаем токен отмены для запроса
     config.cancelToken = new CancelToken((c) => {
       cancel = c
     })
 
-    const token = localStorage.getItem('authtoken')
+    // Всегда используем supplier_token, если он есть, иначе authtoken
+    const supplierToken = localStorage.getItem('supplier_token');
+    const token = supplierToken || localStorage.getItem('authtoken');
     if (token) {
       config.headers = {
         ...config.headers,
         'Authorization': `Bearer ${token}`,
-      }
+      };
     }
-
-    return config
+    return config;
   },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
+  (error) => Promise.reject(error)
+);
 
 // Интерцептор для ответов
 axios.interceptors.response.use(
@@ -1172,3 +1169,5 @@ export const getPhotoById: any = (
   }
   return api.get(`/api/photo/get/${id}`, { headers })
 }
+
+export default api;

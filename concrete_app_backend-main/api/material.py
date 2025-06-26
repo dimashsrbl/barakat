@@ -79,3 +79,13 @@ async def change_is_active(
 ) -> dict:
     material = await MaterialService().change_is_active(uow, material_id, material_update)
     return format_response(material)
+
+
+@router.get("", description='Получить все материалы (универсальный)')
+async def get_materials(
+    uow: UOWDep,
+    is_active: bool = True,
+    current_user: User = Depends(get_current_user),
+):
+    materials, _ = await uow.material.get_all(is_active=is_active)
+    return format_response(materials)

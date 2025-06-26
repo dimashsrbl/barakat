@@ -18,6 +18,7 @@ class Transport(Base):
     carrier_id: Mapped[Optional[int]] = mapped_column(ForeignKey("carrier.id"))
     driver_id: Mapped[Optional[int]] = mapped_column(ForeignKey("driver.id"))
     is_active: Mapped[is_active]
+    created_by: Mapped[int] = mapped_column(ForeignKey('user.id'))
 
     def to_read_model(self) -> TransportSchema:
         return TransportSchema(
@@ -28,4 +29,5 @@ class Transport(Base):
             carrier_id=self.carrier_id,
             driver_id=self.driver_id,
             is_active=self.is_active,
+            created_by=self.created_by,
         )

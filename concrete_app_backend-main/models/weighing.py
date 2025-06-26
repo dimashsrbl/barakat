@@ -54,6 +54,8 @@ class Weighing(Base):
     return_note: Mapped[Optional[str]]
     adjust_note: Mapped[Optional[str]]
 
+    inert_request_id: Mapped[Optional[int]] = mapped_column(ForeignKey('inert_material_request.id'), nullable=True)
+
     def to_read_model(self) -> WeighingSchema:
         return WeighingSchema(
             id=self.id,

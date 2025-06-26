@@ -26,6 +26,7 @@ from repositories.transport import TransportRepository
 from repositories.user import UserRepository
 # from repositories.video_camera import VideoCameraRepository
 from repositories.weighing import WeighingRepository
+from repositories.inert_material_request import InertMaterialRequestRepository
 
 
 # from repositories.weight_indicator import WeightIndicatorRepository
@@ -56,6 +57,7 @@ class IUnitOfWork(ABC):
     # video_camera: Type[VideoCameraRepository]
     weighing: Type[WeighingRepository]
     photo: Type[PhotoRepository]
+    inert_material_request: Type[InertMaterialRequestRepository]
     # weight_indicator: Type[WeightIndicatorRepository]
 
     @abstractmethod
@@ -110,6 +112,7 @@ class UnitOfWork:
         # self.video_camera = VideoCameraRepository(self.session)
         self.weighing = WeighingRepository(self.session)
         self.photo = PhotoRepository(self.session)
+        self.inert_material_request = InertMaterialRequestRepository(self.session)
         # self.weight_indicator = WeightIndicatorRepository(self.session)
         return self
 

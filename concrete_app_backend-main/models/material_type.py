@@ -6,6 +6,8 @@ from sqlalchemy.orm import Mapped, relationship, mapped_column
 from db.db import Base, intpk, is_active
 from schemas.material import MaterialSchema
 from schemas.material_type import MaterialTypeSchema
+from .material_type_object import MaterialTypeObject
+from .object import Object
 
 
 class MaterialType(Base):

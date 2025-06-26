@@ -21,7 +21,7 @@ async def create_transport(
         permissions: list = Depends(check_permission("create_handbook")),
         current_user: User = Depends(get_current_user),
 ) -> dict:
-    transport = await TransportService().create(uow, transport)
+    transport = await TransportService().create(uow, transport, current_user.id)
     return format_response(transport)
 
 
@@ -72,3 +72,10 @@ async def change_is_active(
 ) -> dict:
     transport = await TransportService().change_is_active(uow, transport_id, transport_update)
     return format_response(transport)
+
+
+@router.get("/my")
+async def get_my_transports(uow: UOWDep, current_user: User = Depends(get_current_user)):
+    # Возвращаем только транспорт, созданный этим пользователем
+    transports, _ = await uow.transport.get_all(created_by=current_user.id)
+    return format_response(transports)

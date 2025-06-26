@@ -275,4 +275,66 @@ async def db_data_seed():
                 continue
         print(f'Всего связей ролей и прав доступа: {len(role_permissions)}')
         print('role_permissions have been successfully created')
+
+    # --- Массовое создание пользователей для всех ролей ---
+    users = [
+        {"login": "admin", "fullname": "Әлихан Төлегенұлы", "description": "Администратор", "role_name": "Администратор"},
+        {"login": "director", "fullname": "Мақсат Бекенов", "description": "Директор завода", "role_name": "Директор завода"},
+        {"login": "opdirector", "fullname": "Данияр Қуанышев", "description": "Операционный директор", "role_name": "Операционный директор"},
+        {"login": "saleshead", "fullname": "Айгүл Серікқызы", "description": "Руководитель отдела продаж", "role_name": "Руководитель отдела продаж"},
+        {"login": "salesmanager", "fullname": "Нұржан Әбдірахманов", "description": "Менеджер отдела продаж", "role_name": "Менеджер отдела продаж"},
+        {"login": "logistic", "fullname": "Аружан Мұратова", "description": "Логист", "role_name": "Логист"},
+        {"login": "laborant", "fullname": "Еркебұлан Сейітов", "description": "Лаборант", "role_name": "Лаборант"},
+        {"login": "dispatcher", "fullname": "Гүлнұр Жақсыбаева", "description": "Диспетчер весовой", "role_name": "Диспетчер весовой"},
+        {"login": "founder", "fullname": "Бауыржан Сұлтанов", "description": "Учредитель", "role_name": "Учредитель"},
+        {"login": "accountant", "fullname": "Әсемгүл Оразбаева", "description": "Бухгалтер", "role_name": "Бухгалтер"},
+        {"login": "bsumaster", "fullname": "Қанат Әлібеков", "description": "Мастер БСУ", "role_name": "Мастер БСУ"},
+    ]
+    async with db_helper.get_db_session() as session:
+        for user in users:
+            try:
+                user_data = user.copy()
+                user_data['hashed_password'] = get_password_hash('test123')
+                user_data['role_id'] = (await session.execute(select(Role.id).filter_by(name=user_data.pop('role_name')))).scalar()
+                stmt = insert(User).values(**user_data)
+                await session.execute(stmt)
+            except IntegrityError:
+                print(f"user {user['login']} has already been created")
+                await session.rollback()
+            finally:
+                await session.commit()
+                continue
+        print('Массовое создание пользователей завершено успешно')
+    # --- Конец массового создания пользователей ---
+
+    # --- Тестовый поставщик ---
+    supplier_user = {
+        "login": "supplier1",
+        "fullname": "Айдархан Жумабеков",
+        "description": "Поставщик (тест)",
+        "role_name": "Поставщик",
+        "password": "test123"
+    }
+    # Проверка, есть ли уже такой пользователь
+    async with db_helper.get_db_session() as session:
+        existing = await session.execute(select(User).filter_by(login=supplier_user["login"]))
+        if not existing.scalar_one_or_none():
+            role_result = await session.execute(select(Role.id).filter_by(name=supplier_user["role_name"]))
+            role_id = role_result.scalar_one_or_none()
+            if role_id:
+                await session.execute(insert(User).values(
+                    login=supplier_user["login"],
+                    fullname=supplier_user["fullname"],
+                    description=supplier_user["description"],
+                    role_id=role_id,
+                    hashed_password=get_password_hash(supplier_user["password"]),
+                    is_active=True
+                ))
+                await session.commit()
+                print(f"Тестовый поставщик {supplier_user['login']} создан успешно")
+            else:
+                print(f"Роль '{supplier_user['role_name']}' не найдена")
+        else:
+            print(f"Пользователь {supplier_user['login']} уже существует")
+
     print('all data seed was successfully')

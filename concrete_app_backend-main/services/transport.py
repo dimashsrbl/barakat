@@ -23,8 +23,9 @@ from utils.unitofwork import IUnitOfWork
 
 
 class TransportService:
-    async def create(self, uow: IUnitOfWork, data: TransportSchemaAdd) -> TransportSchema:
+    async def create(self, uow: IUnitOfWork, data: TransportSchemaAdd, user_id: int) -> TransportSchema:
         data_dict = data.model_dump()
+        data_dict['created_by'] = user_id
         async with uow:
             result = await uow.transport.find_one_or_none(plate_number=data_dict['plate_number'])
             if result:

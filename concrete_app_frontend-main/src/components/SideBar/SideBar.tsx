@@ -27,6 +27,7 @@ export const SideBar = () => {
       { icon: <PeopleIcon />, text: 'Пользователи', url: '/main/users' },
       { icon: <ListIcon />, text: 'Справочники', url: '/main/lists' },
       { icon: <FilesIcon />, text: 'Отчеты', url: '/main/reports' },
+      { icon: <BookIcon />, text: 'Заявки на отвесы от поставщиков', url: '/main/supplier-weighing-requests' },
     ];
 
   

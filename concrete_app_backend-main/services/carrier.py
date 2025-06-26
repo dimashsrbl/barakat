@@ -8,8 +8,9 @@ from utils.unitofwork import IUnitOfWork
 
 
 class CarrierService:
-    async def create(self, uow: IUnitOfWork, data: CarrierSchemaAdd) -> CarrierSchema:
+    async def create(self, uow: IUnitOfWork, data: CarrierSchemaAdd, user_id: int) -> CarrierSchema:
         data_dict = data.model_dump()
+        data_dict['created_by'] = user_id
         async with uow:
             carrier = await uow.carrier.find_one_or_none(name=data_dict['name'])
             if carrier:

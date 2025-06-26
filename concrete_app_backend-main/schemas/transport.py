@@ -16,6 +16,7 @@ class TransportSchema(BaseModel):
     driver_id: Optional[PositiveInt] = None
     driver: DriverSchema = None
     is_active: bool
+    created_by: int
 
     class Config:
         from_attributes = True

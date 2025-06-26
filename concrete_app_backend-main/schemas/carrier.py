@@ -8,6 +8,7 @@ class CarrierSchema(BaseModel):
     name: str
     description: Optional[str] = None
     is_active: bool
+    created_by: int
 
     class Config:
         from_attributes = True

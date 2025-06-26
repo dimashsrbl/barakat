@@ -17,6 +17,9 @@ from api.transport import router as transport_router
 from api.user import auth_router, user_router
 from api.weighing import router as weighing_router
 from api.report import router as report_router
+from api.inert_material_request import router as inert_material_request_router
+from api.inert_material_weighing import router as inert_material_weighing_router
+
 api_routers = [
     auth_router,
     user_router,
@@ -43,4 +46,10 @@ api_routers = [
     weighing_router,
     # weight_indicator_router,
     report_router,
+    inert_material_request_router,
+    inert_material_weighing_router,
 ]
+
+def setup_routers(app):
+    # ... существующие роутеры ...
+    app.include_router(inert_material_request_router)
