@@ -50,6 +50,27 @@ export const SideBar = () => {
       setIsSidebarVisible(false);
     };
   
+    // Получаем роль пользователя из localStorage
+    const userRole = localStorage.getItem('userrole');
+
+    // Роли с ограниченным меню
+    const limitedRoles = [
+      'Лаборант',
+      'Мастер БСУ',
+      'Технолог',
+      'Водитель цементовоза',
+    ];
+
+    // Фильтруем пункты меню по роли
+    const filteredBtns =
+      limitedRoles.includes(userRole || '')
+        ? navigateBtns.filter(
+            (item) =>
+              item.text === 'Журнал отвесов' ||
+              item.text === 'Заявки на отвесы от поставщиков'
+          )
+        : navigateBtns;
+  
     return (
       <div className={s.container}>
         <div>
@@ -66,7 +87,7 @@ export const SideBar = () => {
           <hr />
     
           <div className={`${s.list} df fdc`}>
-            {navigateBtns.map((item, index) => {
+            {filteredBtns.map((item, index) => {
               return (
                   <Link
                     to={item.url}

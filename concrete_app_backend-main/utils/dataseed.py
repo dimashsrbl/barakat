@@ -159,6 +159,11 @@ async def db_data_seed():
         {'role_name': 'Логист', 'permission_name': 'edit_request'},
         {'role_name': 'Логист', 'permission_name': 'close_request'},
         {'role_name': 'Логист', 'permission_name': 'deactivate_request'},
+
+        {'role_name': 'Лаборант', 'permission_name': 'edit_independent'},
+        {'role_name': 'Мастер БСУ', 'permission_name': 'edit_independent'},
+        {'role_name': 'Технолог', 'permission_name': 'edit_independent'},
+        {'role_name': 'Водитель цементовоза', 'permission_name': 'edit_independent'},
     ]
     async with db_helper.get_db_session() as session:
         for role in roles:

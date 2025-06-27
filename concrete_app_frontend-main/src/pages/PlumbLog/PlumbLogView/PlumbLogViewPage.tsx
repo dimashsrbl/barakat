@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ReactDOMServer from 'react-dom/server';
 
@@ -8,7 +8,7 @@ import { InputComponent } from 'ui/InputComponent';
 import { SelectComponent } from 'ui/SelectComponentAntd'
 import { ButtonComponent } from 'ui/ButtonComponent';
 
-import { putUpdateFinishedIndependentWeighingByIdData, getIndependentWeighingDataById, getCompaniesData, getMaterialsData, getVehicleData, getPhotosData, getDriversData } from 'store/features/apiSlice'
+import { putUpdateFinishedIndependentWeighingByIdData, getIndependentWeighingDataById, getCompaniesData, getMaterialsData, getVehicleData, getPhotosData, getDriversData, selectUser } from 'store/features/apiSlice'
 
 import s from './index.module.scss'
 import { formatDateTime, numberRegex, photoLimit } from 'constDatas';
@@ -78,6 +78,16 @@ export const PlumbLogViewPage = () => {
     const queryMaterialName = searchParams.get('material');
     const queryCurrentPage = searchParams.get('current_page');
 
+    const rawUser = useSelector(selectUser);
+    const user = typeof rawUser === 'string' ? JSON.parse(rawUser) : rawUser;
+    const userRole = user?.role?.name;
+
+    const isLaborant = userRole === 'Лаборант';
+    const isBSUMaster = userRole === 'Мастер БСУ';
+    const isTechnologist = userRole === 'Технолог';
+    const isCementDriver = userRole === 'Водитель цементовоза';
+    const isSpecialRole = isLaborant || isBSUMaster || isTechnologist || isCementDriver;
+
     const getIndependentWeighing = useCallback(async () => {
         const obj = {
             id: id,
@@ -113,13 +123,27 @@ export const PlumbLogViewPage = () => {
     const editHandler = async () => {
         setIsDisabled(true);
 
+        console.log('material:', material, materialItems);
+        console.log('clientCompany:', clientCompany, clientCompanyItems);
+        console.log('sellerCompany:', sellerCompany, sellerCompanyItems);
+
+        const materialId = materialItems.find((item: any) => item.name === material)?.id;
+        const clientCompanyId = clientCompanyItems.find((item: any) => item.name === clientCompany)?.id;
+        const sellerCompanyId = sellerCompanyItems.find((item: any) => item.name === sellerCompany)?.id;
+
+        if (!materialId || !clientCompanyId || !sellerCompanyId) {
+            setResponseError('Проверьте, что выбраны материал, заказчик и поставщик!');
+            setIsDisabled(false);
+            return;
+        }
+
         const fieldsToCheck: any = {
             id: id,
             tare_weight: Number(tareWeight),
             brutto_weight: Number(bruttoWeight),
-            seller_company_id: sellerCompanyItems.find((item: any) => item.name === sellerCompany)?.id,
-            client_company_id: clientCompanyItems.find((item: any) => item.name === clientCompany)?.id,
-            material_id: materialItems.find((item: any) => item.name === material)?.id,
+            seller_company_id: sellerCompanyId,
+            client_company_id: clientCompanyId,
+            material_id: materialId,
             transport_id: !searchValue ? vehicleItems.find((item: any) => item.plate_number === transport)?.id : null,
             driver_id: driverItems.find((item: any) => item.name === driver)?.id || null,
             doc_weight: Number(docWeight),
@@ -170,6 +194,7 @@ export const PlumbLogViewPage = () => {
     const getMaterials = useCallback(async () => {
         const request = await dispatch(getMaterialsData({is_for_independent: true}));
         setMaterialItems(request?.payload?.data);
+        console.log('Загружены материалы:', request?.payload?.data);
     }, [dispatch]);
 
     const getVehicles = useCallback(async () => {
@@ -371,16 +396,27 @@ export const PlumbLogViewPage = () => {
                     {isReturn && <span className='fw600 fz16'>Возврат</span>}
                     <span className='fz16'>Заполните данные и выполните необходимое действие</span>
                 </div>
-                <ButtonComponent 
-                    width='262px'
-                    height='48px'
-                    text="Сохранить данные"
-                    onClick={(e: any) => {
-                        editHandler();
-                    }}
-                    disabled={isDisabled}
-                    variant='primary'
-                />
+                {isSpecialRole ? (
+                    <ButtonComponent
+                        width='262px'
+                        height='48px'
+                        text="Сохранить данные"
+                        onClick={(e: any) => { editHandler(); }}
+                        disabled={isDisabled}
+                        variant='primary'
+                    />
+                ) : (
+                    <ButtonComponent 
+                        width='262px'
+                        height='48px'
+                        text="Сохранить данные"
+                        onClick={(e: any) => {
+                            editHandler();
+                        }}
+                        disabled={isDisabled}
+                        variant='primary'
+                    />
+                )}
             </div>
 
                 <div className={`${s.infoBlock} df jcsb`}>
@@ -483,6 +519,7 @@ export const PlumbLogViewPage = () => {
                                     e.preventDefault();
                                 }
                             }}
+                            isDisabled={!isBSUMaster && !isCementDriver && isSpecialRole}
                         />
                         <SelectComponent
                             placeholder={'Гос.номер транспорта*'}
@@ -567,6 +604,7 @@ export const PlumbLogViewPage = () => {
                                         e.preventDefault();
                                     }
                                 }}
+                                isDisabled={!isLaborant && isSpecialRole}
                             />
                             <InputComponent
                                 type="default"
@@ -588,7 +626,8 @@ export const PlumbLogViewPage = () => {
                 {responseError !== '' && (
                     <span style={{ color: '#EB5757', fontSize: '14px', margin: '10px 0 0 12px' }}>{responseError}</span>
                 )}
-            <div className={`${s.actionButtons} df`}>
+            {isSpecialRole ? null : (
+                <div className={`${s.actionButtons} df`}>
                     <ButtonComponent 
                         width='100%'
                         height='48px'
@@ -638,6 +677,7 @@ export const PlumbLogViewPage = () => {
                         variant='removeButton'
                     />
                 </div>
+            )}
         </div>
     </div>
  )

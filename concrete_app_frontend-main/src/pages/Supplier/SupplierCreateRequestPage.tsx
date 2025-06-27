@@ -23,7 +23,7 @@ const SupplierCreateRequestPage = () => {
       .then(res => setTransports(res.data.data))
       .catch(() => setError('Ошибка загрузки машин'));
     // Получить материалы
-    api.get('/api/material?is_active=true', {
+    api.get('/api/material?is_active=true&is_for_independent=true', {
       headers: { Authorization: `Bearer ${localStorage.getItem('supplier_token')}` }
     })
       .then(res => setMaterials(res.data.data))
