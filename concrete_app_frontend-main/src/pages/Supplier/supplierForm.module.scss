@@ -1,0 +1,89 @@
+.formBg {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #e3edfa 0%, #f4f6fa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formCard {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px 0 rgba(47,128,237,0.08), 0 1.5px 6px 0 rgba(0,0,0,0.04);
+  padding: 38px 32px 30px 32px;
+  min-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2F80ED;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.input {
+  padding: 11px 13px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s;
+  background: #f7faff;
+}
+.input:focus {
+  border-color: #2F80ED;
+  background: #fff;
+}
+
+.button {
+  background: linear-gradient(90deg, #2F80ED 0%, #56CCF2 100%);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(47,128,237,0.08);
+}
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.button:hover:not(:disabled) {
+  background: linear-gradient(90deg, #56CCF2 0%, #2F80ED 100%);
+}
+
+.success {
+  color: #219150;
+  background: #eafaf1;
+  border-radius: 6px;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.error {
+  color: #e74c3c;
+  background: #fff0f0;
+  border-radius: 6px;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 15px;
+  margin-top: 4px;
+} 

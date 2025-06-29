@@ -116,3 +116,19 @@ async def get_dependent_by_materials_invoice(
 ) -> bytes:
     report = await ReportService().get_dependent_by_materials(from_date, to_date, report_type)
     return format_response(report)
+
+
+@router.get("/weighing_act/{weighing_id}", description='Получить акт взвешивания по id отвеса')
+async def get_weighing_act(
+        weighing_id: int,
+        current_user: User = Depends(get_current_user),
+) -> FileResponse:
+    """
+    Генерирует и возвращает XLSX-файл акта взвешивания по id отвеса
+    """
+    file_path = await ReportService().generate_weighing_act_xlsx(weighing_id)
+    return FileResponse(
+        path=file_path,
+        filename=f"act_{weighing_id}.xlsx",
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )

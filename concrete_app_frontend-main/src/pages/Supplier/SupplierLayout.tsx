@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import styles from './supplierLayout.module.scss';
+import { ApplicationPlanIcon } from '../../assets/icons/ApplicationPlanIcon';
+import { BriefcaseIcon } from '../../assets/icons/Briefcase';
+import { PeopleIcon } from '../../assets/icons/PeopleIcon';
+import { ABSIcon } from '../../assets/icons/ABSIcon';
 
 const menu = [
-  { text: 'Создать заявку', url: '/supplier/create-request' },
-  { text: 'Создать машину', url: '/supplier/create-transport' },
-  { text: 'Создать перевозчика', url: '/supplier/create-carrier' },
-  { text: 'Накладные', url: '/supplier/invoices' },
+  { text: 'Создать заявку', url: '/supplier/create-request', icon: <ApplicationPlanIcon /> },
+  { text: 'Создать машину', url: '/supplier/create-transport', icon: <BriefcaseIcon /> },
+  { text: 'Создать перевозчика', url: '/supplier/create-carrier', icon: <PeopleIcon /> },
+  { text: 'Накладные', url: '/supplier/invoices', icon: <ABSIcon /> },
 ];
 
 const SupplierLayout = () => {
@@ -18,31 +23,22 @@ const SupplierLayout = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <nav style={{ width: 220, background: '#f7f7f7', padding: 24, borderRight: '1px solid #eee' }}>
-        <h3 style={{ marginBottom: 32 }}>Кабинет поставщика</h3>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+    <div className={styles.layout}>
+      <aside className={styles.sidebar}>
+        <div className={styles.logo}>Кабинет поставщика</div>
+        <ul className={styles.menu}>
           {menu.map(item => (
-            <li key={item.url} style={{ marginBottom: 18 }}>
-              <Link
-                to={item.url}
-                style={{
-                  color: location.pathname === item.url ? '#2F80ED' : '#222',
-                  fontWeight: location.pathname === item.url ? 700 : 400,
-                  textDecoration: 'none',
-                  fontSize: 18,
-                }}
-              >
-                {item.text}
+            <li key={item.url} className={location.pathname === item.url ? styles.active : ''}>
+              <Link to={item.url} className={styles.menuLink}>
+                <span className={styles.icon}>{item.icon}</span>
+                <span>{item.text}</span>
               </Link>
             </li>
           ))}
         </ul>
-      </nav>
-      <main style={{ flex: 1, padding: 32 }}>
-        <button onClick={handleLogout} style={{ position: 'absolute', top: 16, right: 16, padding: 8, background: '#eee', border: '1px solid #ccc', borderRadius: 6, cursor: 'pointer' }}>
-          Выйти
-        </button>
+        <button className={styles.logout} onClick={handleLogout}>Выйти</button>
+      </aside>
+      <main className={styles.content}>
         <Outlet />
       </main>
     </div>

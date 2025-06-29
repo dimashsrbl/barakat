@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import api from '../../api';
+import styles from './supplierLogin.module.scss';
 
 const SupplierLoginPage = ({ onLogin }: { onLogin: (user: any) => void }) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     try {
       const res = await api.post('http://localhost:8000/api/auth/login', { username: login, password });
       const token = res.data?.data?.access_token;
@@ -18,36 +21,41 @@ const SupplierLoginPage = ({ onLogin }: { onLogin: (user: any) => void }) => {
       });
       if (profile.data?.data?.role?.name !== 'Поставщик') {
         setError('Доступ только для поставщиков!');
+        setLoading(false);
         return;
       }
       localStorage.setItem('supplier_token', token);
       onLogin(profile.data.data);
     } catch (err) {
       setError('Неверный логин или пароль');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 320, margin: '80px auto', padding: 24, border: '1px solid #eee', borderRadius: 8 }}>
-      <h2>Вход для поставщика</h2>
-      <form onSubmit={handleSubmit}>
+    <div className={styles.loginBg}>
+      <form className={styles.loginCard} onSubmit={handleSubmit}>
+        <h2 className={styles.title}>Вход для поставщика</h2>
         <input
           type="text"
           placeholder="Логин"
           value={login}
           onChange={e => setLogin(e.target.value)}
-          style={{ width: '100%', marginBottom: 12, padding: 8 }}
+          className={styles.input}
         />
         <input
           type="password"
           placeholder="Пароль"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          style={{ width: '100%', marginBottom: 12, padding: 8 }}
+          className={styles.input}
         />
-        <button type="submit" style={{ width: '100%', padding: 8 }}>Войти</button>
+        <button type="submit" className={styles.button} disabled={loading}>
+          {loading ? 'Вход...' : 'Войти'}
+        </button>
+        {error && <div className={styles.error}>{error}</div>}
       </form>
-      {error && <div style={{ color: 'red', marginTop: 12 }}>{error}</div>}
     </div>
   );
 };

@@ -188,7 +188,7 @@ class ReportService:
             from_date_title = from_date.strftime("%d-%m-%Y %H:%M")
             to_date_title = to_date.strftime("%d-%m-%Y %H:%M")
 
-            ws1['A1'] = f"Сводный отчет по отвесам ТОО “BARAKAT INVEST” с {from_date_title} по {to_date_title}"
+            ws1['A1'] = f"Сводный отчет по отвесам ТОО 'BARAKAT INVEST' с {from_date_title} по {to_date_title}"
 
             ws1['A1'].alignment = Alignment(horizontal="center", vertical="center")
             ws1['A2'] = f"Контрагент"
@@ -364,7 +364,7 @@ class ReportService:
             to_date_title = to_date.strftime("%d-%m-%Y %H:%M")
 
             ws1['A1'] = (f"Детальный отчет по отвесам ТОО\n"
-                         f"“BARAKAT INVEST” с {from_date_title} по {to_date_title}")
+                         f"'BARAKAT INVEST' с {from_date_title} по {to_date_title}")
 
             ws1['A1'].alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
 
@@ -597,7 +597,7 @@ class ReportService:
 
             ws1.merge_cells('A1:K1')
             ws1['A1'] = (f"Отчет по удаленным независимым отвесам ТОО\n"
-                         f"“BARAKAT INVEST” с {from_date_title} по {to_date_title}")
+                         f"'BARAKAT INVEST' с {from_date_title} по {to_date_title}")
             ws1['A1'].alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
 
             ws1['A2'] = f"№"
@@ -698,7 +698,7 @@ class ReportService:
 
             ws1.merge_cells(f'A{counter}:O{counter}')
             ws1[f'A{counter}'] = (f"Отчет по корректированным независимым отвесам ТОО\n"
-                                  f"“BARAKAT INVEST” с {from_date_title} по {to_date_title}")
+                                  f"'BARAKAT INVEST' с {from_date_title} по {to_date_title}")
             ws1.row_dimensions[counter].height = height / 2
 
             ws1[f'A{counter}'].alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
@@ -888,7 +888,7 @@ class ReportService:
             to_date_title = to_date.strftime("%d-%m-%Y %H:%M")
 
             ws1['A1'] = (f"Отчет по материалам по независимым отвесам ТОО\n"
-                         f"“BARAKAT INVEST” с {from_date_title} по {to_date_title}")
+                         f"'BARAKAT INVEST' с {from_date_title} по {to_date_title}")
 
             ws1['A1'].alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
 
@@ -968,7 +968,7 @@ class ReportService:
             cells_to_merge = f'A{title_column}:D{title_column}'
             ws1.merge_cells(cells_to_merge)
             ws1[
-                f"{title_row}{title_column}"] = f"Отгрузка по типам материалов ТОО “Торговый Дом Баракат Инвест” с {from_date_title} по {to_date_title}"
+                f"{title_row}{title_column}"] = f"Отгрузка по типам материалов ТОО 'Торговый Дом Баракат Инвест' с {from_date_title} по {to_date_title}"
             ws1[f'{title_row}{title_column}'].alignment = Alignment(horizontal="center", vertical="center")
 
             start_cell = f'A{title_column}'
@@ -1031,7 +1031,7 @@ class ReportService:
                     continue
                 # cells_to_merge = f'A{title_column}:D{title_column}'
                 # ws1.merge_cells(cells_to_merge)
-                # ws1[f"{title_row}{title_column}"] = f"Отгрузка по материалу \"{material_type_name}\" ТОО “Торговый Дом Баракат Инвест” с {from_date_title} по {to_date_title}"
+                # ws1[f"{title_row}{title_column}"] = f"Отгрузка по материалу "{material_type_name}" ТОО "Торговый Дом Баракат Инвест" с {from_date_title} по {to_date_title}"
                 # ws1[f'{title_row}{title_column}'].alignment = Alignment(horizontal="center", vertical="center")
                 #
                 # start_cell = f'A{title_column}'
@@ -1204,7 +1204,7 @@ class ReportService:
             to_date_title = to_date.strftime("%d-%m-%Y %H:%M")
 
             ws1[
-                'A1'] = f"Детальный отчет по заявкам ТОО “Торговый Дом Баракат Инвест” с {from_date_title} по {to_date_title}"
+                'A1'] = f"Детальный отчет по заявкам ТОО 'Торговый Дом Баракат Инвест' с {from_date_title} по {to_date_title}"
             ws1['A1'].alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
 
             ws1['A2'] = f"№"
@@ -1445,7 +1445,7 @@ class ReportService:
 
             ws1.merge_cells('A1:N1')
             ws1['A1'] = (f"Отчет по удаленным зависимым отвесам ТОО\n"
-                         f"“BARAKAT INVEST” с {from_date_title} по {to_date_title}")
+                         f"'BARAKAT INVEST' с {from_date_title} по {to_date_title}")
             ws1['A1'].alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
 
             ws1['A2'] = f"№"
@@ -1565,7 +1565,7 @@ class ReportService:
 
             ws1.merge_cells(f'A{counter}:P{counter}')
             ws1[f'A{counter}'] = (f"Отчет по корректированным зависимым отвесам ТОО\n"
-                                  f"“BARAKAT INVEST” с {from_date_title} по {to_date_title}")
+                                  f"'BARAKAT INVEST' с {from_date_title} по {to_date_title}")
             ws1.row_dimensions[counter].height = height / 2
 
             ws1[f'fA{counter}'].alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
@@ -2084,3 +2084,69 @@ class ReportService:
             self.set_print_settings(ws1)
             await session.close()
             return self.to_bytes(wb)
+
+    async def generate_weighing_act_xlsx(self, weighing_id: int) -> str:
+        """
+        Генерирует XLSX акт взвешивания по id отвеса и возвращает путь к файлу
+        """
+        async with db_helper.get_db_session() as session:
+            from models.weighing import Weighing
+            from models.detail import Detail
+            from models.company import Company
+            from models.material import Material
+            from models.transport import Transport
+            from models.driver import Driver
+            from models.carrier import Carrier
+            from models.user import User
+
+            weighing = await session.get(Weighing, weighing_id)
+            if not weighing:
+                raise BadRequestException("Отвес не найден")
+            detail = await session.get(Detail, weighing.detail_id)
+            seller = await session.get(Company, detail.seller_company_id)
+            client = await session.get(Company, detail.client_company_id)
+            material = await session.get(Material, detail.material_id)
+            transport = await session.get(Transport, weighing.transport_id)
+            driver = await session.get(Driver, weighing.driver_id) if weighing.driver_id else None
+            carrier = await session.get(Carrier, transport.carrier_id) if transport and transport.carrier_id else None
+            first_operator = await session.get(User, weighing.first_operator_id) if weighing.first_operator_id else None
+            second_operator = await session.get(User, weighing.second_operator_id) if weighing.second_operator_id else None
+
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Акт взвешивания"
+
+            ws["A1"] = f"Акт взвешивания №{weighing.id}"
+            ws["A2"] = f"Поставщик: {getattr(seller, 'name', '')}"
+            ws["A3"] = f"Заказчик: {getattr(client, 'name', '')}"
+            ws["A4"] = f"Гос.номер: {getattr(transport, 'plate_number', '')}"
+            ws["A5"] = f"Водитель: {getattr(driver, 'fullname', '')}"
+            ws["A6"] = f"Материал: {getattr(material, 'name', '')}"
+            ws["A7"] = f"Перевозчик: {getattr(carrier, 'name', '')}"
+
+            ws["A9"] = "Данные по весу:"
+            ws.append(["Брутто, кг", "Тара, кг", "Нетто, кг", "Номер силоса", "Кол-во мешков"])
+            ws.append([
+                weighing.brutto_weight or '-',
+                weighing.tare_weight or '-',
+                weighing.netto_weight or '-',
+                weighing.silo_number or '-',
+                weighing.bag_details or '-',
+            ])
+
+            ws.append([])
+            ws.append(["", "Первое взвешивание", "Второе взвешивание"])
+            ws.append([
+                "Оператор",
+                getattr(first_operator, 'fullname', '-') if first_operator else '-',
+                getattr(second_operator, 'fullname', '-') if second_operator else '-',
+            ])
+            ws.append([
+                "Дата и время",
+                weighing.first_at.strftime("%d-%m-%Y %H:%M") if weighing.first_at else '-',
+                weighing.second_at.strftime("%d-%m-%Y %H:%M") if weighing.second_at else '-',
+            ])
+
+            file_path = f"media/act_{weighing.id}.xlsx"
+            wb.save(file_path)
+            return file_path

@@ -431,17 +431,17 @@ export const PlumbLogEditPage = () => {
                         <ButtonComponent 
                             width='100%'
                             height='48px'
-                            text='Взвесить тару' 
+                            text="Взвесить тару" 
                             disabled={isTareWeighButtonDisabled}
-                            onClick={() => {tareWeighButton()}}
+                            onClick={tareWeighButton}
                             variant='primary'
                         />
                         <ButtonComponent 
                             width='100%'
                             height='48px'
-                            text='Взвесить брутто' 
+                            text="Взвесить брутто" 
                             disabled={isBruttoWeighButtonDisabled}
-                            onClick={() => {bruttoWeighButton()}}
+                            onClick={bruttoWeighButton}
                             variant='primary'
                         />
                     </div>

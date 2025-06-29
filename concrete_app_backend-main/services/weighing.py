@@ -765,7 +765,7 @@ class WeighingService:
                 from services.report import ReportService
                 report_service = ReportService()
                 try:
-                    file_path = f"media/invoice_{result.id}.xlsx"
+                    file_path = await report_service.generate_weighing_act_xlsx(result.id)
                     pass  # invoice_path больше не сохраняем в БД
                 except Exception as e:
                     pass
@@ -928,7 +928,7 @@ class WeighingService:
                 from services.report import ReportService
                 report_service = ReportService()
                 try:
-                    file_path = f"media/invoice_{weighing.id}.xlsx"
+                    file_path = await report_service.generate_weighing_act_xlsx(weighing.id)
                     pass  # invoice_path больше не сохраняем в БД
                 except Exception as e:
                     pass

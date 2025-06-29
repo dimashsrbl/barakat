@@ -91,7 +91,7 @@ async def get_my_invoices(uow: UOWDep, current_user: User = Depends(get_current_
         carrier = (await uow.carrier.find_one_or_none(id=req.carrier_id)).name if req.carrier_id else None
         material = (await uow.material.find_one_or_none(id=req.material_id)).name if req.material_id else None
         invoice_weighing = await uow.weighing.find_one_or_none(inert_request_id=req.id, is_finished=True)
-        invoice_path = f"media/invoice_{invoice_weighing.id}.xlsx" if invoice_weighing else None
+        invoice_path = f"media/act_{invoice_weighing.id}.xlsx" if invoice_weighing else None
         result.append({
             "id": req.id,
             "plate_number": plate_number,
