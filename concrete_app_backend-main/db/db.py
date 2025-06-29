@@ -54,7 +54,7 @@ class DatabaseHelper:
             await session.rollback()
             raise
         finally:
-            await asyncio.shield(session.close())
+            await session.close()
 
 
 db_helper = DatabaseHelper(settings.DATABASE_URL_asyncpg)

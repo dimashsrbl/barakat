@@ -49,6 +49,7 @@ class Weighing(Base):
     is_active: Mapped[is_active]
     is_return: Mapped[bool] = mapped_column(default=False)
     is_adjusted: Mapped[bool] = mapped_column(default=False)
+    status: Mapped[str] = mapped_column(default="waiting_first")
 
     deactivate_note: Mapped[Optional[str]]
     return_note: Mapped[Optional[str]]
@@ -95,4 +96,6 @@ class Weighing(Base):
             deactivate_note=self.deactivate_note,
             return_note=self.return_note,
             adjust_note=self.adjust_note,
+            status=self.status,
+            inert_request_id=self.inert_request_id,
         )

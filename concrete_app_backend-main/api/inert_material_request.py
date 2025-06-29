@@ -44,6 +44,8 @@ async def get_all_inert_requests_with_status(uow: UOWDep):
                 status = "Завершено"
             elif weighing and weighing.tare_weight and not weighing.brutto_weight:
                 status = "Сделан первый отвес"
+            elif weighing and weighing.tare_weight and weighing.brutto_weight and not (weighing.weediness and weighing.silo_number):
+                status = "Ожидание лаборатории"
             elif (now - req.created_at) > timedelta(hours=12) and req.status.value != "finished":
                 status = "Не приехал"
             user = await uow.user.find_one_or_none(id=req.created_by)
@@ -73,14 +75,31 @@ async def get_my_invoices(uow: UOWDep, current_user: User = Depends(get_current_
         company_name = company.name if company else None
 
     result = []
-    for r in my_requests:
-        d = r.to_read_model() if hasattr(r, 'to_read_model') else dict(r)
-        d = d.model_dump() if hasattr(d, 'model_dump') else dict(d)
-        d['company'] = company_name
-        weighing = await uow.weighing.find_one_or_none(inert_request_id=r.id, is_finished=True)
-        if weighing:
-            d['invoice_path'] = f"media/invoice_{weighing.id}.xlsx"
-        else:
-            d['invoice_path'] = None
-        result.append(d)
+    now = datetime.utcnow()
+    for req in my_requests:
+        weighing = await uow.weighing.find_one_or_none(inert_request_id=req.id)
+        status = "В пути"
+        if req.status.value == "finished":
+            status = "Завершено"
+        elif weighing and weighing.tare_weight and not weighing.brutto_weight:
+            status = "Сделан первый отвес"
+        elif weighing and weighing.tare_weight and weighing.brutto_weight and not (weighing.weediness and weighing.silo_number):
+            status = "Ожидание лаборатории"
+        elif (now - req.created_at) > timedelta(hours=12) and req.status.value != "finished":
+            status = "Не приехал"
+        plate_number = (await uow.transport.find_one_or_none(id=req.transport_id)).plate_number if req.transport_id else None
+        carrier = (await uow.carrier.find_one_or_none(id=req.carrier_id)).name if req.carrier_id else None
+        material = (await uow.material.find_one_or_none(id=req.material_id)).name if req.material_id else None
+        invoice_weighing = await uow.weighing.find_one_or_none(inert_request_id=req.id, is_finished=True)
+        invoice_path = f"media/invoice_{invoice_weighing.id}.xlsx" if invoice_weighing else None
+        result.append({
+            "id": req.id,
+            "plate_number": plate_number,
+            "carrier": carrier,
+            "material": material,
+            "created_at": req.created_at,
+            "status": status,
+            "company": company_name,
+            "invoice_path": invoice_path
+        })
     return format_response(result) 

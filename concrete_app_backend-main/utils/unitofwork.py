@@ -116,10 +116,13 @@ class UnitOfWork:
         # self.weight_indicator = WeightIndicatorRepository(self.session)
         return self
 
-    async def __aexit__(self, *args):
-        await self.rollback()
-        await self.session.close()
-        await self.ctx.__aexit__(*args)
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        try:
+            if exc_type is not None:
+                await self.rollback()
+            await self.ctx.__aexit__(exc_type, exc_val, exc_tb)
+        except Exception:
+            pass
 
     async def commit(self):
         await self.session.commit()

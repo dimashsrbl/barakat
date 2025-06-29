@@ -76,6 +76,8 @@ class WeighingSchema(BaseModel):
     deactivate_note: Optional[str] = None
     return_note: Optional[str] = None
     adjust_note: Optional[str] = None
+    
+    inert_request_id: Optional[int] = None
 
     class Config:
         from_attributes = True

@@ -636,7 +636,8 @@ class WeighingService:
 
         updated_data['second_at'] = datetime.datetime.now()
         updated_data['second_operator_id'] = user_id
-        updated_data['is_finished'] = True
+        updated_data['status'] = 'waiting_lab'
+        updated_data['is_finished'] = False
         async with uow:
             result = await uow.weighing.find_one_or_none(id=id, is_finished=False, is_depend=False)
             if not result:
@@ -662,7 +663,13 @@ class WeighingService:
                             "Invalid weight value: your tare/brutto must be same as in first weighing")
 
             updated_data['netto_weight'] = updated_data['brutto_weight'] - updated_data['tare_weight']
-            if updated_data['weediness']:
+            # Пересчёт чистого веса при изменении сорности
+            if (
+                'weediness' in updated_data
+                and updated_data['weediness'] is not None
+                and result.tare_weight is not None
+                and result.brutto_weight is not None
+            ):
                 updated_data['clean_weight'] = math.ceil(
                     updated_data['netto_weight'] * (1 - updated_data['weediness'] / 100))
             else:
@@ -713,6 +720,20 @@ class WeighingService:
             result = await uow.weighing.update(id, updated_data)
             await uow.detail.update(result.detail_id, detail_dict)
 
+            # Получаем свежий отвес из БД для корректной проверки завершённости
+            fresh_weighing = await uow.weighing.find_one_or_none(id=id)
+            print(f"[DEBUG] fresh_weighing: id={getattr(fresh_weighing, 'id', None)}, inert_request_id={getattr(fresh_weighing, 'inert_request_id', None)}, brutto_weight={getattr(fresh_weighing, 'brutto_weight', None)}, weediness={getattr(fresh_weighing, 'weediness', None)}, silo_number={getattr(fresh_weighing, 'silo_number', None)}")
+            if (
+                fresh_weighing
+                and fresh_weighing.inert_request_id
+                and fresh_weighing.brutto_weight is not None
+                and fresh_weighing.weediness is not None
+                and fresh_weighing.silo_number is not None
+            ):
+                print(f"[DEBUG] Завершаем заявку: {fresh_weighing.inert_request_id}")
+                from services.inert_material_request import InertMaterialRequestService
+                await InertMaterialRequestService().finish(uow, fresh_weighing.inert_request_id)
+
             result.seller_company = seller_company.to_read_model()
             result.client_company = client_company.to_read_model()
             result.material = material.to_read_model()
@@ -730,6 +751,65 @@ class WeighingService:
 
             if result.photo_id:
                 result.photo = await uow.photo.update(result.photo_id, {'is_attached': True})
+
+            # Проверяем, заполнены ли сорность и номер силоса
+            weediness_filled = bool(updated_data.get('weediness'))
+            silo_number_filled = bool(updated_data.get('silo_number'))
+            tare_filled = result.tare_weight is not None or updated_data.get('tare_weight')
+            brutto_filled = result.brutto_weight is not None or updated_data.get('brutto_weight')
+
+            if weediness_filled and silo_number_filled and tare_filled and brutto_filled:
+                updated_data['status'] = 'finished'
+                updated_data['is_finished'] = True
+                # Генерируем акт и сохраняем путь
+                from services.report import ReportService
+                report_service = ReportService()
+                try:
+                    file_path = f"media/invoice_{result.id}.xlsx"
+                    pass  # invoice_path больше не сохраняем в БД
+                except Exception as e:
+                    pass
+                # --- Если есть заявка, меняем её статус на finished ---
+                if result.inert_request_id:
+                    from services.inert_material_request import InertMaterialRequestService
+                    await InertMaterialRequestService().finish(uow, result.inert_request_id)
+            else:
+                updated_data['status'] = 'waiting_lab'
+                updated_data['is_finished'] = False
+
+            if updated_data['transport_id']:
+                transport = await uow.transport.find_one_or_none(id=updated_data['transport_id'])
+                if not transport:
+                    raise BadRequestException("invalid transport id")
+            elif plate_number:
+                transport = await uow.transport.find_one_or_none(plate_number=plate_number)
+                if not transport:
+                    transport_dict = {
+                        "plate_number": plate_number,
+                        "is_active": False
+                    }
+                    transport = await uow.transport.create(transport_dict)
+                updated_data['transport_id'] = transport.id
+
+            result = await uow.weighing.update(id, updated_data)
+            await uow.detail.update(result.detail_id, detail_dict)
+
+            result.seller_company = seller_company.to_read_model()
+            result.client_company = client_company.to_read_model()
+            result.material = material.to_read_model()
+
+            result.transport = transport.to_read_model()
+            carrier = await uow.carrier.find_one_or_none(id=result.transport.carrier_id)
+            if carrier:
+                result.transport.carrier = carrier.to_read_model()
+
+            result.first_operator = first_operator.to_read_model()
+            if result.second_operator_id:
+                result.second_operator = second_operator.to_read_model()
+
+            if result.photo_id:
+                result.photo = await uow.photo.update(result.photo_id, {'is_attached': True})
+
             await uow.commit()
             return result
 
@@ -823,27 +903,42 @@ class WeighingService:
             if not weighing:
                 raise BadRequestException("invalid weighing id")
 
-            if not weighing.is_finished:
-                raise BadRequestException("weighing not finished")
-            weighing = weighing.to_read_model()
+            # Пересчёт чистого веса при изменении сорности
+            if (
+                'weediness' in updated_data
+                and updated_data['weediness'] is not None
+                and weighing.tare_weight is not None
+                and weighing.brutto_weight is not None
+            ):
+                netto_weight = weighing.brutto_weight - weighing.tare_weight
+                updated_data['netto_weight'] = netto_weight
+                updated_data['clean_weight'] = math.ceil(netto_weight * (1 - updated_data['weediness'] / 100))
+            # Если weediness пустое — clean_weight не трогаем, ошибки не будет
 
-            # Если есть сорность, обновляем чистый вес
-            if updated_data['weediness']:
-                updated_data['clean_weight'] = math.ceil(weighing.netto_weight * (1 - updated_data['weediness'] / 100))
+            # Проверяем, заполнены ли сорность и номер силоса
+            weediness_filled = bool(updated_data.get('weediness'))
+            silo_number_filled = bool(updated_data.get('silo_number'))
+            tare_filled = weighing.tare_weight is not None or updated_data.get('tare_weight')
+            brutto_filled = weighing.brutto_weight is not None or updated_data.get('brutto_weight')
+
+            if weediness_filled and silo_number_filled and tare_filled and brutto_filled:
+                updated_data['status'] = 'finished'
+                updated_data['is_finished'] = True
+                # Генерируем акт и сохраняем путь
+                from services.report import ReportService
+                report_service = ReportService()
+                try:
+                    file_path = f"media/invoice_{weighing.id}.xlsx"
+                    pass  # invoice_path больше не сохраняем в БД
+                except Exception as e:
+                    pass
+                # --- Если есть заявка, меняем её статус на finished ---
+                if weighing.inert_request_id:
+                    from services.inert_material_request import InertMaterialRequestService
+                    await InertMaterialRequestService().finish(uow, weighing.inert_request_id)
             else:
-                updated_data['clean_weight'] = weighing.netto_weight
-
-            seller_company = await uow.company.find_one_or_none(id=detail_dict['seller_company_id'])
-            if not seller_company:
-                raise BadRequestException("invalid seller company id")
-
-            client_company = await uow.company.find_one_or_none(id=detail_dict['client_company_id'])
-            if not client_company:
-                raise BadRequestException("invalid client company id")
-
-            material = await uow.material.find_one_or_none(id=detail_dict['material_id'])
-            if not material:
-                raise BadRequestException("invalid material id")
+                updated_data['status'] = 'waiting_lab'
+                updated_data['is_finished'] = False
 
             if updated_data['transport_id']:
                 transport = await uow.transport.find_one_or_none(id=updated_data['transport_id'])
@@ -862,9 +957,9 @@ class WeighingService:
             result = await uow.weighing.update(id, updated_data)
             await uow.detail.update(result.detail_id, detail_dict)
 
-            result.seller_company = seller_company.to_read_model()
-            result.client_company = client_company.to_read_model()
-            result.material = material.to_read_model()
+            result.seller_company = (await uow.company.find_one_or_none(id=detail_dict['seller_company_id'])).to_read_model()
+            result.client_company = (await uow.company.find_one_or_none(id=detail_dict['client_company_id'])).to_read_model()
+            result.material = (await uow.material.find_one_or_none(id=detail_dict['material_id'])).to_read_model()
 
             result.transport = transport.to_read_model()
             carrier = await uow.carrier.find_one_or_none(id=result.transport.carrier_id)

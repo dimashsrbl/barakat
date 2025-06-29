@@ -161,9 +161,13 @@ async def db_data_seed():
         {'role_name': 'Логист', 'permission_name': 'deactivate_request'},
 
         {'role_name': 'Лаборант', 'permission_name': 'edit_independent'},
+        {'role_name': 'Лаборант', 'permission_name': 'finish_independent'},
         {'role_name': 'Мастер БСУ', 'permission_name': 'edit_independent'},
+        {'role_name': 'Мастер БСУ', 'permission_name': 'finish_independent'},
         {'role_name': 'Технолог', 'permission_name': 'edit_independent'},
         {'role_name': 'Водитель цементовоза', 'permission_name': 'edit_independent'},
+        {'role_name': 'Водитель цементовоза', 'permission_name': 'finish_independent'},
+        {'role_name': 'Поставщик', 'permission_name': 'create_handbook'},
     ]
     async with db_helper.get_db_session() as session:
         for role in roles:
@@ -256,28 +260,21 @@ async def db_data_seed():
         print('permissions have been successfully created')
 
     async with db_helper.get_db_session() as session:
-        for permission in permissions:
-            try:
-                stmt = delete(RolePermission)
-                await session.execute(stmt)
+        # Удаляем все старые связи ролей и прав
+        await session.execute(delete(RolePermission))
+        await session.commit()
+        for role_permission in role_permissions:
+            stmt = select(Role.id).filter_by(name=role_permission['role_name'])
+            raw = await session.execute(stmt)
+            role_id = raw.scalar_one_or_none()
 
-                for role_permission in role_permissions:
-                    stmt = select(Role.id).filter_by(name=role_permission['role_name'])
-                    raw = await session.execute(stmt)
-                    role_id = raw.scalar_one_or_none()
+            stmt = select(Permission.id).filter_by(name=role_permission['permission_name'])
+            raw = await session.execute(stmt)
+            permission_id = raw.scalar_one_or_none()
 
-                    stmt = select(Permission.id).filter_by(name=role_permission['permission_name'])
-                    raw = await session.execute(stmt)
-                    permission_id = raw.scalar_one_or_none()
-
-                    stmt = insert(RolePermission).values(role_id=role_id, permission_id=permission_id)
-                    await session.execute(stmt)
-            except IntegrityError:
-                print('role_permission has already been created')
-                await session.rollback()
-            finally:
-                await session.commit()
-                continue
+            stmt = insert(RolePermission).values(role_id=role_id, permission_id=permission_id)
+            await session.execute(stmt)
+        await session.commit()
         print(f'Всего связей ролей и прав доступа: {len(role_permissions)}')
         print('role_permissions have been successfully created')
 
