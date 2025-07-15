@@ -42,9 +42,9 @@ async def get_all_inert_requests_with_status(uow: UOWDep):
             status = "В пути"
             if req.status.value == "finished":
                 status = "Завершено"
-            elif weighing and weighing.tare_weight and not weighing.brutto_weight:
+            elif weighing and weighing.brutto_weight and not weighing.tare_weight:
                 status = "Сделан первый отвес"
-            elif weighing and weighing.tare_weight and weighing.brutto_weight and not (weighing.weediness and weighing.silo_number):
+            elif weighing and weighing.brutto_weight and weighing.tare_weight and not (weighing.weediness and weighing.silo_number):
                 status = "Ожидание лаборатории"
             elif (now - req.created_at) > timedelta(hours=12) and req.status.value != "finished":
                 status = "Не приехал"
@@ -83,9 +83,9 @@ async def get_my_invoices(uow: UOWDep, current_user: User = Depends(get_current_
         status = "В пути"
         if req.status.value == "finished":
             status = "Завершено"
-        elif weighing and weighing.tare_weight and not weighing.brutto_weight:
+        elif weighing and weighing.brutto_weight and not weighing.tare_weight:
             status = "Сделан первый отвес"
-        elif weighing and weighing.tare_weight and weighing.brutto_weight and not (weighing.weediness and weighing.silo_number):
+        elif weighing and weighing.brutto_weight and weighing.tare_weight and not (weighing.weediness and weighing.silo_number):
             status = "Ожидание лаборатории"
         elif (now - req.created_at) > timedelta(hours=12) and req.status.value != "finished":
             status = "Не приехал"

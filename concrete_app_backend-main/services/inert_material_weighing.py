@@ -34,11 +34,12 @@ class InertMaterialWeighingService:
                     client_company_id = 2  # Баракат
                     material_id = inert_request.material_id
                     print(f"[DEBUG] Создаём отвес: detail_id={detail_id}, inert_request_id={inert_request.id}, transport_id={transport.id}")
-                    # Первый взвес — создаём независимый отвес с detail_id и inert_request_id
+                    # Первый взвес (брутто) — создаём независимый отвес с detail_id и inert_request_id
                     weighing = await uow.weighing.create({
                         'transport_id': transport.id,
                         'detail_id': detail_id,
-                        'tare_weight': weight,
+                        'brutto_weight': weight,  # ИЗМЕНЕНО: первый взвес теперь брутто
+                        'tare_weight': None,      # ИЗМЕНЕНО: тара пока пустая
                         'first_at': datetime.utcnow(),
                         'first_operator_id': operator_id,
                         'is_depend': False,
@@ -47,7 +48,7 @@ class InertMaterialWeighingService:
                         'inert_request_id': inert_request.id,
                     })
                 else:
-                    # Первый взвес — создаём detail для независимого отвеса (старое поведение)
+                    # Первый взвес (брутто) — создаём detail для независимого отвеса (старое поведение)
                     detail = await uow.detail.create({
                         'seller_company_id': user.company_id,
                         'client_company_id': 2,  # id компании 'Баракат'
@@ -59,7 +60,8 @@ class InertMaterialWeighingService:
                     weighing = await uow.weighing.create({
                         'transport_id': transport.id,
                         'detail_id': detail.id,
-                        'tare_weight': weight,
+                        'brutto_weight': weight,  # ИЗМЕНЕНО: первый взвес теперь брутто
+                        'tare_weight': None,      # ИЗМЕНЕНО: тара пока пустая
                         'first_at': datetime.utcnow(),
                         'first_operator_id': operator_id,
                         'is_depend': False,
@@ -67,14 +69,14 @@ class InertMaterialWeighingService:
                         'is_active': True,
                     })
                 await uow.commit()
-                return {"message": "Первый взвес (тара) записан", "weighing_id": weighing.id}
+                return {"message": "Первый взвес (брутто) записан", "weighing_id": weighing.id}
             else:
-                # Второй взвес — обновляем запись, фиксируем брутто
-                if weighing.brutto_weight:
+                # Второй взвес — обновляем запись, фиксируем тару
+                if weighing.tare_weight:
                     raise Exception("Уже есть второй взвес для этой машины!")
                 print(f"[DEBUG] Второй взвес: weighing_id={weighing.id}, inert_request_id={getattr(weighing, 'inert_request_id', None)}")
                 weighing = await uow.weighing.update(weighing.id, {
-                    'brutto_weight': weight,
+                    'tare_weight': weight,  # ИЗМЕНЕНО: второй взвес теперь тара
                     'second_at': datetime.utcnow(),
                     'second_operator_id': operator_id,
                     'is_finished': True,
@@ -93,7 +95,7 @@ class InertMaterialWeighingService:
                 # --- КОНЕЦ ДОБАВЛЕНИЯ ---
                 await uow.commit()
                 return {
-                    "message": "Второй взвес (брутто) записан, отвес завершён", 
+                    "message": "Второй взвес (тара) записан, отвес завершён", 
                     "weighing_id": weighing.id, 
                     "invoice_path": file_path
                 }
