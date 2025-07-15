@@ -7,7 +7,7 @@ import { InputComponent } from 'ui/InputComponent';
 import { SelectComponent } from 'ui/SelectComponentAntd'
 import { ButtonComponent } from 'ui/ButtonComponent';
 
-import { putFinishIndependentWeighingsData, getIndependentWeighingDataById, getCompaniesData, getMaterialsData, getVehicleData, getPhotosData, getDriversData } from 'store/features/apiSlice'
+import { putFinishIndependentWeighingsData, getIndependentWeighingDataById, getCompaniesData, getMaterialsData, getVehicleData, getPhotosData, getDriversData, putUpdateFinishedIndependentWeighingByIdData } from 'store/features/apiSlice'
 
 import s from './index.module.scss'
 import { formatDateTime, numberRegex, photoLimit } from 'constDatas';
@@ -122,18 +122,13 @@ export const PlumbLogEditPage = () => {
             return acc;
         }, {});
 
-        const response = await dispatch(putFinishIndependentWeighingsData(obj))
-        if (response?.payload?.message === 'ok' || response?.payload?.statusCode === 200) {
-            setIsDisabled(false);
-            navigate(`/main/plumblog/view/${id}`)
-        } else if (response?.error?.message.includes('401') || response?.error?.message.includes('403')) {
-            setResponseError('Недостаточно прав для выполнения этого запроса.');
-        } else if (response?.error?.message.includes('400')) {
-            setResponseError('Некорректный запрос. Пожалуйста, убедитесь, что введенные данные соответствуют требованиям и повторите попытку.');
-            return
+        // Получаем актуальные данные отвеса для проверки is_finished
+        const weighingResp = await dispatch(getIndependentWeighingDataById({ id }));
+        const weighingData = weighingResp?.payload?.data;
+        if (weighingData?.is_finished) {
+            await dispatch(putUpdateFinishedIndependentWeighingByIdData(obj));
         } else {
-            setResponseError(response?.payload?.error?.message || 'Ошибка сервера');
-            return
+            await dispatch(putFinishIndependentWeighingsData(obj));
         }
     }
 

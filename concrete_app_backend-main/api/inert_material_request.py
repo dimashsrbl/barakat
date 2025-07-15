@@ -77,7 +77,9 @@ async def get_my_invoices(uow: UOWDep, current_user: User = Depends(get_current_
     result = []
     now = datetime.utcnow()
     for req in my_requests:
-        weighing = await uow.weighing.find_one_or_none(inert_request_id=req.id)
+        # Получаем все отвесы по заявке (через get_all)
+        weighings, _ = await uow.weighing.get_all(None, None, inert_request_id=req.id)
+        weighing = weighings[0] if weighings else None
         status = "В пути"
         if req.status.value == "finished":
             status = "Завершено"

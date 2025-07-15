@@ -1,6 +1,14 @@
 {
   "baudrate": 9600,
-  "port": "5",
+  "port": 3,
   "connect_interval": 5,
-  "driver": "IP65"
+  "auto_weighing": {
+    "enabled": true,
+    "api_url": "http://localhost:8000/api/inert_weighing/auto_weighing",
+    "default_operator_id": 12,
+    "default_plate_number": "A123BC45",
+    "min_weight": 2000,
+    "stability_threshold": 50,
+    "stability_time": 5
+  }
 }

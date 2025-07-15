@@ -291,6 +291,7 @@ async def db_data_seed():
         {"login": "founder", "fullname": "Бауыржан Сұлтанов", "description": "Учредитель", "role_name": "Учредитель"},
         {"login": "accountant", "fullname": "Әсемгүл Оразбаева", "description": "Бухгалтер", "role_name": "Бухгалтер"},
         {"login": "bsumaster", "fullname": "Қанат Әлібеков", "description": "Мастер БСУ", "role_name": "Мастер БСУ"},
+        {"login": "auto_system", "fullname": "Автоматическая система", "description": "Автоматический оператор", "role_name": "Диспетчер весовой", "company_id": 2},
     ]
     async with db_helper.get_db_session() as session:
         for user in users:
